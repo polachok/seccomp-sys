@@ -5,6 +5,8 @@ authors = ["Alexander Polakov <apolyakov@beget.ru>"]
 license = "LGPL-2.1"
 keywords = ["linux", "seccomp"]
 description = "low-level bindings to libseccomp"
+repository = "https://github.com/polachok/seccomp-sys"
+readme = "README.md"
 
 [dependencies]
 libc = "0.2"
