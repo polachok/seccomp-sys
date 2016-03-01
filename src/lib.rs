@@ -34,9 +34,9 @@ pub const SCMP_ACT_ALLOW: u32 = 0x7fff0000;
 #[repr(C)]
 pub enum scmp_filter_attr {
     _SCMP_FLTATR_MIN,
-    SCMP_FLTATR_ACT_DEFAULT, /**< default filter action */
-    SCMP_FLTATR_ACT_BADARCH, /**< bad architecture action */
-    SCMP_FLTATR_CTL_NNP, /**< set NO_NEW_PRIVS on filter load */
+    SCMP_FLTATR_ACT_DEFAULT, /** default filter action */
+    SCMP_FLTATR_ACT_BADARCH, /** bad architecture action */
+    SCMP_FLTATR_CTL_NNP, /** set NO_NEW_PRIVS on filter load */
     _SCMP_FLTATR_MAX,
 }
 
@@ -46,13 +46,13 @@ pub enum scmp_filter_attr {
 #[repr(C)]
 pub enum scmp_compare {
         _SCMP_CMP_MIN = 0,
-        SCMP_CMP_NE = 1,                /**< not equal */
-        SCMP_CMP_LT = 2,                /**< less than */
-        SCMP_CMP_LE = 3,                /**< less than or equal */
-        SCMP_CMP_EQ = 4,                /**< equal */
-        SCMP_CMP_GE = 5,                /**< greater than or equal */
-        SCMP_CMP_GT = 6,                /**< greater than */
-        SCMP_CMP_MASKED_EQ = 7,         /**< masked equality */
+        SCMP_CMP_NE = 1,                /** not equal */
+        SCMP_CMP_LT = 2,                /** less than */
+        SCMP_CMP_LE = 3,                /** less than or equal */
+        SCMP_CMP_EQ = 4,                /** equal */
+        SCMP_CMP_GE = 5,                /** greater than or equal */
+        SCMP_CMP_GT = 6,                /** greater than */
+        SCMP_CMP_MASKED_EQ = 7,         /** masked equality */
         _SCMP_CMP_MAX,
 }
 
@@ -67,8 +67,8 @@ pub type scmp_datum_t = libc::uint64_t;
  */
 #[repr(C)]
 pub struct scmp_arg_cmp {
-        pub arg: libc::c_uint,        /**< argument number, starting at 0 */
-        pub op: scmp_compare,       /**< the comparison op, e.g. SCMP_CMP_* */
+        pub arg: libc::c_uint,        /** argument number, starting at 0 */
+        pub op: scmp_compare,       /** the comparison op, e.g. SCMP_CMP_* */
         pub datum_a: scmp_datum_t,
         pub datum_b: scmp_datum_t,
 }
