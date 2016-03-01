@@ -16,11 +16,13 @@ pub const SCMP_ACT_TRAP: u32 = 0x00030000;
 /**
  * Return the specified error code
  */
-//pub const SCMP_ACT_ERRNO(x)       (0x00050000U | ((x) & 0x0000ffffU))
+#[allow(non_snake_case)]
+pub fn SCMP_ACT_ERRNO(x: u32) -> u32 { 0x00050000 | ((x) & 0x0000ffff) }
 /**
  * Notify a tracing process with the specified value
  */
-//pub const SCMP_ACT_TRACE(x)       (0x7ff00000U | ((x) & 0x0000ffffU))
+#[allow(non_snake_case)]
+pub fn SCMP_ACT_TRACE(x: u32) -> u32 { 0x7ff00000 | ((x) & 0x0000ffff) }
 /**
  * Allow the syscall to be executed
  */
