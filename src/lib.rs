@@ -31,6 +31,7 @@ pub const SCMP_ACT_ALLOW: u32 = 0x7fff0000;
 /**
  * Filter attributes
  */
+#[derive(Debug)]
 #[repr(C)]
 pub enum scmp_filter_attr {
     _SCMP_FLTATR_MIN,
@@ -43,6 +44,7 @@ pub enum scmp_filter_attr {
 /**
  * Comparison operators
  */
+#[derive(Debug)]
 #[repr(C)]
 pub enum scmp_compare {
         _SCMP_CMP_MIN = 0,
@@ -65,6 +67,7 @@ pub type scmp_datum_t = libc::uint64_t;
 /**
  * Argument / Value comparison definition
  */
+#[derive(Debug)]
 #[repr(C)]
 pub struct scmp_arg_cmp {
         pub arg: libc::c_uint,        /** argument number, starting at 0 */
