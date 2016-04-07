@@ -189,6 +189,29 @@ extern {
     pub fn seccomp_rule_add(ctx: *mut scmp_filter_ctx,
                          action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
 
+
+
+    /**
+     * Add a new rule to the filter
+     *
+     * @param ctx the filter context
+     * @param action the filter action
+     * @param syscall the syscall number
+     * @param arg_cnt the number of elements in the arg_array parameter
+     * @param arg_array array of scmp_arg_cmp structs
+     *
+     * This function adds a series of new argument/value checks to the seccomp
+     * filter for the given syscall; multiple argument/value checks can be
+     * specified and they will be chained together (AND'd together) in the filter.
+     * If the specified rule needs to be adjusted due to architecture specifics it
+     * will be adjusted without notification.  Returns zero on success, negative
+     * values on failure.
+     *
+     */
+    pub fn seccomp_rule_add_array(ctx: *mut scmp_filter_ctx,
+        action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint,
+        arg_array: *const scmp_arg_cmp) -> libc::c_int;
+
     /**
      * Add a new rule to the filter
      *
@@ -207,6 +230,26 @@ extern {
      */
     pub fn seccomp_rule_add_exact(ctx: *mut scmp_filter_ctx, action: libc::uint32_t,
                                syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
+
+    /**
+     * Add a new rule to the filter
+     *
+     * @param ctx the filter context
+     * @param action the filter action
+     * @param syscall the syscall number
+     * @param arg_cnt  the number of elements in the arg_array parameter
+     * @param arg_array array of scmp_arg_cmp structs
+     *
+     * This function adds a series of new argument/value checks to the seccomp
+     * filter for the given syscall; multiple argument/value checks can be
+     * specified and they will be chained together (AND'd together) in the filter.
+     * If the specified rule can not be represented on the architecture the
+     * function will fail.  Returns zero on success, negative values on failure.
+     *
+     */
+    pub fn seccomp_rule_add_exact_array(ctx: *mut scmp_filter_ctx,
+                                        action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint,
+                                        arg_array: *const scmp_arg_cmp) -> libc::c_int;
 
     /**
      * Generate seccomp Pseudo Filter Code (PFC) and export it to a file
