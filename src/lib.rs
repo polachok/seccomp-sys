@@ -64,6 +64,31 @@ pub enum scmp_compare {
 }
 
 /**
+ * Architecutres
+ */
+#[derive(Debug,Clone,Copy)]
+#[repr(C)]
+pub enum scmp_arch {
+    SCMP_ARCH_NATIVE = 0x0,
+    SCMP_ARCH_X86 = 0x40000003,
+    SCMP_ARCH_X86_64 = 0xc000003e,
+    SCMP_ARCH_X32 = 0x4000003e,
+    SCMP_ARCH_ARM = 0x40000028,
+    SCMP_ARCH_AARCH64 = 0xc00000b7,
+    SCMP_ARCH_MIPS = 0x8,
+    SCMP_ARCH_MIPS64 = 0x80000008,
+    SCMP_ARCH_MIPS64N32 = 0xa0000008,
+    SCMP_ARCH_MIPSEL = 0x40000008,
+    SCMP_ARCH_MIPSEL64 = 0xc0000008,
+    SCMP_ARCH_MIPSEL64N32 = 0xe0000008,
+    SCMP_ARCH_PPC = 0x14,
+    SCMP_ARCH_PPC64 = 0x80000015,
+    SCMP_ARCH_PPC64LE = 0xc0000015,
+    SCMP_ARCH_S390 = 0x16,
+    SCMP_ARCH_S390X = 0x80000016,
+}
+
+/**
  * Argument datum
  */
 #[allow(non_camel_case_types)]
@@ -119,6 +144,34 @@ extern {
      *
      */
     pub fn seccomp_release(ctx: *mut scmp_filter_ctx);
+
+    /**
+     * Adds an architecture to the filter
+     * @param ctx the filter context
+     * @param arch_token the architecture token, e.g. SCMP_ARCH_*
+     *
+     * This function adds a new architecture to the given seccomp filter context.
+     * Any new rules added after this function successfully returns will be added
+     * to this architecture but existing rules will not be added to this
+     * architecture.  If the architecture token is SCMP_ARCH_NATIVE then the native
+     * architecture will be assumed.  Returns zero on success, negative values on
+     * failure.
+     *
+     */
+    pub fn seccomp_arch_add(ctx: *mut scmp_filter_ctx, arch_token: libc::uint32_t) -> libc::c_int;
+
+    /**
+     * Removes an architecture from the filter
+     * @param ctx the filter context
+     * @param arch_token the architecture token, e.g. SCMP_ARCH_*
+     *
+     * This function removes an architecture from the given seccomp filter context.
+     * If the architecture token is SCMP_ARCH_NATIVE then the native architecture
+     * will be assumed.  Returns zero on success, negative values on failure.
+     *
+     */
+    pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: libc::uint32_t)-> libc::c_int;
+
     /**
      * Loads the filter into the kernel
      *
