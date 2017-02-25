@@ -6,6 +6,11 @@ extern crate libc;
 pub type scmp_filter_ctx = libc::c_void;
 
 /**
+ * Error retern value
+ */
+pub const __NR_SCMP_ERROR: libc::c_int = -1;
+
+/**
  * Kill the process
  */
 pub const SCMP_ACT_KILL: u32  = 0x00000000;
@@ -155,6 +160,16 @@ extern {
     pub fn seccomp_attr_set(ctx: *mut scmp_filter_ctx,
                          attr: scmp_filter_attr, value: libc::uint32_t) -> libc::c_int;
 
+    /**
+     * Resolve a syscall name to a number
+     * @param name the syscall name
+     *
+     * Resolve the given syscall name to the syscall number.  Returns the syscall
+     * number on success, including negative pseudo syscall numbers (e.g. __PNR_*);
+     * returns __NR_SCMP_ERROR on failure.
+     *
+     */
+    pub fn seccomp_syscall_resolve_name(name: *const libc::c_char) -> libc::c_int;
 
     /**
      * Set the priority of a given syscall
