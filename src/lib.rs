@@ -36,6 +36,7 @@ pub const SCMP_ACT_ALLOW: u32 = 0x7fff0000;
 /**
  * Filter attributes
  */
+#[allow(non_camel_case_types)]
 #[derive(Debug,Clone,Copy)]
 #[repr(C)]
 pub enum scmp_filter_attr {
@@ -49,6 +50,7 @@ pub enum scmp_filter_attr {
 /**
  * Comparison operators
  */
+#[allow(non_camel_case_types)]
 #[derive(Debug,Clone,Copy)]
 #[repr(C)]
 pub enum scmp_compare {
@@ -66,6 +68,7 @@ pub enum scmp_compare {
 /**
  * Architecutres
  */
+#[allow(non_camel_case_types)]
 #[derive(Debug,Clone,Copy)]
 #[repr(C)]
 pub enum scmp_arch {
