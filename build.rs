@@ -8,7 +8,7 @@ use curl::easy::Easy;
 
 fn main() {
 
-    if pkg_config::probe_library("ibseccomp").is_err() {
+    if pkg_config::probe_library("libseccomp").is_err() {
         // libseccomp is not installed as a system library... ideally
         // we would like to build it from source, to make installation
         // easier.
