@@ -1,41 +1,21 @@
 extern crate pkg_config;
-extern crate curl;
 extern crate gcc;
 
-use std::io::{Write};
-
-use curl::easy::Easy;
+use std::io::{Read,Write};
 
 fn main() {
 
     if pkg_config::probe_library("libseccomp").is_err() {
-        // libseccomp is not installed as a system library... ideally
-        // we would like to build it from source, to make installation
-        // easier.
-        let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
+        // libseccomp is not installed as a system library... We thus
+        // need to build it from source.
+        if !std::path::Path::new("libseccomp/.git").exists() {
+            let _ = std::process::Command::new("git")
+                .args(&["submodule", "update", "--init"])
+                .status();
+        }
 
-        let mut tarball = std::fs::File::create(out_dir.join("libseccomp.tar.gz")).unwrap();
-        let mut handle = Easy::new();
-        handle.follow_location(true).unwrap();
-        handle.url("https://github.com/seccomp/libseccomp/releases/download/v2.3.2/libseccomp-2.3.2.tar.gz").unwrap();
-        handle.write_function(move |data| {
-            Ok(tarball.write(data).unwrap())
-        }).unwrap();
-        handle.perform().unwrap();
+        let src_dir = std::path::Path::new("libseccomp/src");
 
-        run("Trouble untarring source code",
-            std::process::Command::new("tar")
-            .args(&["xzf", "libseccomp.tar.gz"])
-            .current_dir(&out_dir));
-
-        let build_dir = out_dir.join("libseccomp-2.3.2");
-        let src_dir = build_dir.join("src");
-
-        // The following is an unholy hodge-podge of techniques.  I
-        // use ./configure to generate the "config.h" file, which is
-        // used by the library.  But sadly, I can't seem to get make
-        // to cross-compile libseccomp properly, even though I
-        // specified the --host argument to ./configure.  So instead,
         // I manually determine which files to compile, and then use
         // the gcc crate, which *does* know how to cross-compile
         // properly to do the actual building of the library.
@@ -49,30 +29,30 @@ fn main() {
                     }
             }
         }
-        let prefix = out_dir.join("libseccomp");
+        // I create an empty file named config.h, since libseccomp
+        // doesn't actually require anything in the config.h, just
+        // that it exist.
+        let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
+        std::fs::File::create(out_dir.join("configure.h")).unwrap();
 
-        let target = std::env::var("TARGET").unwrap();
-        println!("target is {}", target);
-        run("Trouble configuring source code",
-            std::process::Command::new("./configure")
-            .args(&["--enable-shared=no", "--disable-dependency-tracking",
-                    "--prefix",])
-            .arg(prefix)
-            .arg("--host")
-            .arg(target)
-            .current_dir(&build_dir));
+        let mut header_in = std::fs::File::open(src_dir.join("../include/seccomp.h.in")).unwrap();
+        let mut contents = String::new();
+        header_in.read_to_string(&mut contents)
+            .expect("something went wrong reading the seccomp.h.in");
+        let contents = contents.replace("@VERSION_MAJOR@", "2");
+        let contents = contents.replace("@VERSION_MINOR@", "3");
+        let contents = contents.replace("@VERSION_MICRO@", "2");
+        {
+            let mut header_out = std::fs::File::create(out_dir.join("seccomp.h")).unwrap();
+            write!(header_out, "{}", contents).unwrap();
+        }
 
         gcc::Build::new()
             .files(sources)
+            .include(&out_dir)
             .include(&src_dir)
-            .include(&build_dir)
-            .include(build_dir.join("include"))
+            .include(src_dir.join(".."))
+            .include(src_dir.join("../include"))
             .compile("libseccomp.a");
-    }
-}
-
-fn run(error_msg: &'static str, cmd: &mut std::process::Command) {
-    if !cmd.status().expect(error_msg).success() {
-        panic!(error_msg);
     }
 }
