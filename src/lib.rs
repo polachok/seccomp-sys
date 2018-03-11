@@ -109,7 +109,6 @@ pub struct scmp_arg_cmp {
         pub datum_b: scmp_datum_t,
 }
 
-#[link(name = "seccomp")]
 extern {
     /**
      * Initialize the filter state

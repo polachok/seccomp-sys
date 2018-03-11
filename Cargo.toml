@@ -1,12 +1,16 @@
 [package]
-name = "seccomp-sys"
+name = "seccomp-droundy-sys"
 version = "0.1.2"
-authors = ["Alexander Polakov <apolyakov@beget.ru>"]
+authors = ["Alexander Polakov <apolyakov@beget.ru>", "David Roundy <daveroundy@gmail.com>"]
 license = "LGPL-2.1"
 keywords = ["linux", "seccomp"]
 description = "low-level bindings to libseccomp"
-repository = "https://github.com/polachok/seccomp-sys"
+repository = "https://github.com/droundy/seccomp-sys"
 readme = "README.md"
 
 [dependencies]
 libc = "0.2"
+
+[build-dependencies]
+pkg-config = "^0.3.9"
+gcc = "0.3"
