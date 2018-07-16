@@ -7,6 +7,7 @@ keywords = ["linux", "seccomp"]
 description = "low-level bindings to libseccomp"
 repository = "https://github.com/polachok/seccomp-sys"
 readme = "README.md"
+build = "build.rs"
 
 [dependencies]
 libc = "0.2"
