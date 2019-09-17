@@ -11,9 +11,13 @@ pub type scmp_filter_ctx = libc::c_void;
 pub const __NR_SCMP_ERROR: libc::c_int = -1;
 
 /**
- * Kill the process
+ * Kill the calling thread
  */
 pub const SCMP_ACT_KILL: u32  = 0x00000000;
+/**
+ * Kill the calling process
+ */
+pub const SCMP_ACT_KILL_PROCESS: u32 = 0x80000000;
 /**
  * Throw a SIGSYS signal
  */
