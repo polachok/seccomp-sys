@@ -99,7 +99,7 @@ pub enum scmp_arch {
  * Argument datum
  */
 #[allow(non_camel_case_types)]
-pub type scmp_datum_t = libc::uint64_t;
+pub type scmp_datum_t = u64;
 
 /**
  * Argument / Value comparison definition
@@ -125,7 +125,7 @@ extern {
      * state is initialized.  Returns a filter context on success, NULL on failure.
      *
      */
-    pub fn seccomp_init(def_action: libc::uint32_t) -> *mut scmp_filter_ctx;
+    pub fn seccomp_init(def_action: u32) -> *mut scmp_filter_ctx;
     /**
      * Reset the filter state
      *
@@ -138,7 +138,7 @@ extern {
      * values on failure.
      *
      */
-    pub fn seccomp_reset(ctx: *mut scmp_filter_ctx, def_action: libc::uint32_t) -> libc::c_int;
+    pub fn seccomp_reset(ctx: *mut scmp_filter_ctx, def_action: u32) -> libc::c_int;
     /**
      * Destroys the filter state and releases any resources
      *
@@ -165,7 +165,7 @@ extern {
      * failure.
      *
      */
-    pub fn seccomp_arch_add(ctx: *mut scmp_filter_ctx, arch_token: libc::uint32_t) -> libc::c_int;
+    pub fn seccomp_arch_add(ctx: *mut scmp_filter_ctx, arch_token: u32) -> libc::c_int;
 
     /**
      * Removes an architecture from the filter
@@ -177,7 +177,7 @@ extern {
      * will be assumed.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: libc::uint32_t)-> libc::c_int;
+    pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: u32)-> libc::c_int;
 
     /**
      * Loads the filter into the kernel
@@ -204,7 +204,7 @@ extern {
      *
      */
     pub fn seccomp_attr_get(ctx: *const scmp_filter_ctx,
-                         attr: scmp_filter_attr, value: *mut libc::uint32_t) -> libc::c_int;
+                         attr: scmp_filter_attr, value: *mut u32) -> libc::c_int;
 
     /**
      * Set the value of a filter attribute
@@ -218,7 +218,7 @@ extern {
      *
      */
     pub fn seccomp_attr_set(ctx: *mut scmp_filter_ctx,
-                         attr: scmp_filter_attr, value: libc::uint32_t) -> libc::c_int;
+                         attr: scmp_filter_attr, value: u32) -> libc::c_int;
 
     /**
      * Resolve a syscall name to a number
@@ -245,7 +245,7 @@ extern {
      *
      */
     pub fn seccomp_syscall_priority(ctx: *mut scmp_filter_ctx,
-                                 syscall: libc::c_int, priority: libc::uint8_t) -> libc::c_int;
+                                 syscall: libc::c_int, priority: u8) -> libc::c_int;
 
     /**
      * Add a new rule to the filter
@@ -265,7 +265,7 @@ extern {
      *
      */
     pub fn seccomp_rule_add(ctx: *mut scmp_filter_ctx,
-                         action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
+                         action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
 
 
 
@@ -287,7 +287,7 @@ extern {
      *
      */
     pub fn seccomp_rule_add_array(ctx: *mut scmp_filter_ctx,
-        action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint,
+        action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint,
         arg_array: *const scmp_arg_cmp) -> libc::c_int;
 
     /**
@@ -306,7 +306,7 @@ extern {
      * function will fail.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_rule_add_exact(ctx: *mut scmp_filter_ctx, action: libc::uint32_t,
+    pub fn seccomp_rule_add_exact(ctx: *mut scmp_filter_ctx, action: u32,
                                syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
 
     /**
@@ -326,7 +326,7 @@ extern {
      *
      */
     pub fn seccomp_rule_add_exact_array(ctx: *mut scmp_filter_ctx,
-                                        action: libc::uint32_t, syscall: libc::c_int, arg_cnt: libc::c_uint,
+                                        action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint,
                                         arg_array: *const scmp_arg_cmp) -> libc::c_int;
 
     /**
