@@ -1,0 +1,5 @@
+language: rust
+rust:
+  - stable
+before_script:
+  - sudo apt update && sudo apt install libseccomp-dev
