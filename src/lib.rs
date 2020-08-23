@@ -232,6 +232,18 @@ extern {
     pub fn seccomp_syscall_resolve_name(name: *const libc::c_char) -> libc::c_int;
 
     /**
+     * Resolve a syscall number to a name
+     * @param arch_token the architecture token, e.g. SCMP_ARCH_*
+     * @param num the syscall number
+     *
+     * Resolve the given syscall number to the syscall name for the given
+     * architecture; it is up to the caller to free the returned string.  Returns
+     * the syscall name on success, NULL on failure.
+     *
+     */
+    pub fn seccomp_syscall_resolve_num_arch(arch_token: u32, num: libc::c_int) -> *const libc::c_char;
+
+    /**
      * Set the priority of a given syscall
      *
      * @param ctx the filter context
