@@ -1,3 +1,4 @@
+extern crate pkg_config;
 use std::env;
 
 fn main() {
@@ -17,4 +18,13 @@ fn main() {
             println!("cargo:rustc-link-search=native={}", rustc_link_search),
         Err(_) => {}
     };
+
+    if pkg_config::Config::new()
+        .atleast_version("2.5.0")
+        .probe("libseccomp")
+        .is_ok()
+    {
+
+        println!("cargo:rustc-cfg=seccomp_notify");
+    }
 }

@@ -36,6 +36,10 @@ pub fn SCMP_ACT_TRACE(x: u32) -> u32 { 0x7ff00000 | ((x) & 0x0000ffff) }
  * Allow the syscall to be executed
  */
 pub const SCMP_ACT_ALLOW: u32 = 0x7fff0000;
+/**
+ * Notify userspace
+ */
+pub const SCMP_ACT_NOTIFY: u32 = 0x7fc00000;
 
 /**
  * Filter attributes
@@ -111,6 +115,42 @@ pub struct scmp_arg_cmp {
         pub op: scmp_compare,       /** the comparison op, e.g. SCMP_CMP_* */
         pub datum_a: scmp_datum_t,
         pub datum_b: scmp_datum_t,
+}
+
+/**
+ * struct seccomp_data - the format the BPF program executes over.
+ * @nr: the system call number
+ * @arch: indicates system call convention as an AUDIT_ARCH_* value
+ *        as defined in <linux/audit.h>.
+ * @instruction_pointer: at the time of the system call.
+ * @args: up to 6 system call arguments always stored as 64-bit values
+ *        regardless of the architecture.
+ */
+#[derive(Debug)]
+#[repr(C)]
+pub struct seccomp_data {
+    pub nr: libc::c_int,
+    pub arch: u32,
+    pub instruction_pointer: u64,
+    pub args: [u64; 6],
+}
+
+#[derive(Debug)]
+#[repr(C)]
+pub struct seccomp_notif {
+    pub id: u64,
+    pub pid: u32,
+    pub flags: u32,
+    pub data: seccomp_data,
+}
+
+#[derive(Debug)]
+#[repr(C)]
+pub struct seccomp_notif_resp {
+    pub id: u64,
+    pub val: i64,
+    pub error: i32,
+    pub flags: u32,
 }
 
 #[link(name = "seccomp")]
@@ -364,6 +404,79 @@ extern {
      *
      */
     pub fn seccomp_export_bpf(ctx: *const scmp_filter_ctx, fd: libc::c_int) -> libc::c_int;
+
+    /**
+     * Allocate a pair of notification request/response structures
+     * @param req the request location
+     * @param resp the response location
+     *
+     * This function allocates a pair of request/response structure by computing
+     * the correct sized based on the currently running kernel. It returns zero on
+     * success, and negative values on failure.
+     *
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_alloc(req: *mut *mut seccomp_notif,
+                                resp: *mut *mut seccomp_notif_resp) -> libc::c_int;
+
+    /**
+     * Free a pair of notification request/response structures.
+     * @param req the request location
+     * @param resp the response location
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_free(req: *mut seccomp_notif,
+                               resp: *mut seccomp_notif_resp) -> libc::c_void;
+
+    /**
+     * Receive a notification from a seccomp notification fd
+     * @param fd the notification fd
+     * @param req the request buffer to save into
+     *
+     * Blocks waiting for a notification on this fd. This function is thread safe
+     * (synchronization is performed in the kernel). Returns zero on success,
+     * negative values on error.
+     *
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_receive(fd: libc::c_int, req: *mut seccomp_notif) -> libc::c_int;
+
+    /**
+     * Send a notification response to a seccomp notification fd
+     * @param fd the notification fd
+     * @param resp the response buffer to use
+     *
+     * Sends a notification response on this fd. This function is thread safe
+     * (synchronization is performed in the kernel). Returns zero on success,
+     * negative values on error.
+     *
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_respond(fd: libc::c_int, resp: *mut seccomp_notif_resp) -> libc::c_int;
+
+    /**
+     * Check if a notification id is still valid
+     * @param fd the notification fd
+     * @param id the id to test
+     *
+     * Checks to see if a notification id is still valid. Returns 0 on success, and
+     * negative values on failure.
+     *
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_id_valid(fd: libc::c_int, id: u64) -> libc::c_int;
+
+    /**
+     * Return the notification fd from a filter that has already been loaded
+     * @param ctx the filter context
+     *
+     * This returns the listener fd that was generated when the seccomp policy was
+     * loaded. This is only valid after seccomp_load() with a filter that makes
+     * use of SCMP_ACT_NOTIFY.
+     *
+     */
+    #[cfg(seccomp_notify)]
+    pub fn seccomp_notify_fd(ctx: *const scmp_filter_ctx) -> libc::c_int;
 }
 
 #[test]
