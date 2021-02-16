@@ -13,7 +13,7 @@ pub const __NR_SCMP_ERROR: libc::c_int = -1;
 /**
  * Kill the calling thread
  */
-pub const SCMP_ACT_KILL: u32  = 0x00000000;
+pub const SCMP_ACT_KILL: u32 = 0x00000000;
 /**
  * Kill the calling process
  */
@@ -26,12 +26,16 @@ pub const SCMP_ACT_TRAP: u32 = 0x00030000;
  * Return the specified error code
  */
 #[allow(non_snake_case)]
-pub fn SCMP_ACT_ERRNO(x: u32) -> u32 { 0x00050000 | ((x) & 0x0000ffff) }
+pub fn SCMP_ACT_ERRNO(x: u32) -> u32 {
+    0x00050000 | ((x) & 0x0000ffff)
+}
 /**
  * Notify a tracing process with the specified value
  */
 #[allow(non_snake_case)]
-pub fn SCMP_ACT_TRACE(x: u32) -> u32 { 0x7ff00000 | ((x) & 0x0000ffff) }
+pub fn SCMP_ACT_TRACE(x: u32) -> u32 {
+    0x7ff00000 | ((x) & 0x0000ffff)
+}
 /**
  * Allow the syscall to be executed
  */
@@ -45,13 +49,16 @@ pub const SCMP_ACT_NOTIFY: u32 = 0x7fc00000;
  * Filter attributes
  */
 #[allow(non_camel_case_types)]
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub enum scmp_filter_attr {
     _SCMP_FLTATR_MIN,
-    SCMP_FLTATR_ACT_DEFAULT, /** default filter action */
-    SCMP_FLTATR_ACT_BADARCH, /** bad architecture action */
-    SCMP_FLTATR_CTL_NNP, /** set NO_NEW_PRIVS on filter load */
+    SCMP_FLTATR_ACT_DEFAULT,
+    /** default filter action */
+    SCMP_FLTATR_ACT_BADARCH,
+    /** bad architecture action */
+    SCMP_FLTATR_CTL_NNP,
+    /** set NO_NEW_PRIVS on filter load */
     _SCMP_FLTATR_MAX,
 }
 
@@ -59,25 +66,32 @@ pub enum scmp_filter_attr {
  * Comparison operators
  */
 #[allow(non_camel_case_types)]
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub enum scmp_compare {
-        _SCMP_CMP_MIN = 0,
-        SCMP_CMP_NE = 1,                /** not equal */
-        SCMP_CMP_LT = 2,                /** less than */
-        SCMP_CMP_LE = 3,                /** less than or equal */
-        SCMP_CMP_EQ = 4,                /** equal */
-        SCMP_CMP_GE = 5,                /** greater than or equal */
-        SCMP_CMP_GT = 6,                /** greater than */
-        SCMP_CMP_MASKED_EQ = 7,         /** masked equality */
-        _SCMP_CMP_MAX,
+    _SCMP_CMP_MIN = 0,
+    SCMP_CMP_NE = 1,
+    /** not equal */
+    SCMP_CMP_LT = 2,
+    /** less than */
+    SCMP_CMP_LE = 3,
+    /** less than or equal */
+    SCMP_CMP_EQ = 4,
+    /** equal */
+    SCMP_CMP_GE = 5,
+    /** greater than or equal */
+    SCMP_CMP_GT = 6,
+    /** greater than */
+    SCMP_CMP_MASKED_EQ = 7,
+    /** masked equality */
+    _SCMP_CMP_MAX,
 }
 
 /**
  * Architecutres
  */
 #[allow(non_camel_case_types)]
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub enum scmp_arch {
     SCMP_ARCH_NATIVE = 0x0,
@@ -111,10 +125,12 @@ pub type scmp_datum_t = u64;
 #[derive(Debug)]
 #[repr(C)]
 pub struct scmp_arg_cmp {
-        pub arg: libc::c_uint,        /** argument number, starting at 0 */
-        pub op: scmp_compare,       /** the comparison op, e.g. SCMP_CMP_* */
-        pub datum_a: scmp_datum_t,
-        pub datum_b: scmp_datum_t,
+    pub arg: libc::c_uint,
+    /** argument number, starting at 0 */
+    pub op: scmp_compare,
+    /** the comparison op, e.g. SCMP_CMP_* */
+    pub datum_a: scmp_datum_t,
+    pub datum_b: scmp_datum_t,
 }
 
 /**
@@ -154,7 +170,7 @@ pub struct seccomp_notif_resp {
 }
 
 #[link(name = "seccomp")]
-extern {
+extern "C" {
     /**
      * Initialize the filter state
      *
@@ -217,7 +233,7 @@ extern {
      * will be assumed.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: u32)-> libc::c_int;
+    pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: u32) -> libc::c_int;
 
     /**
      * Loads the filter into the kernel
@@ -243,8 +259,11 @@ extern {
      * via @value.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_attr_get(ctx: *const scmp_filter_ctx,
-                         attr: scmp_filter_attr, value: *mut u32) -> libc::c_int;
+    pub fn seccomp_attr_get(
+        ctx: *const scmp_filter_ctx,
+        attr: scmp_filter_attr,
+        value: *mut u32,
+    ) -> libc::c_int;
 
     /**
      * Set the value of a filter attribute
@@ -257,8 +276,11 @@ extern {
      * success, negative values on failure.
      *
      */
-    pub fn seccomp_attr_set(ctx: *mut scmp_filter_ctx,
-                         attr: scmp_filter_attr, value: u32) -> libc::c_int;
+    pub fn seccomp_attr_set(
+        ctx: *mut scmp_filter_ctx,
+        attr: scmp_filter_attr,
+        value: u32,
+    ) -> libc::c_int;
 
     /**
      * Resolve a syscall name to a number
@@ -281,7 +303,10 @@ extern {
      * the syscall name on success, NULL on failure.
      *
      */
-    pub fn seccomp_syscall_resolve_num_arch(arch_token: u32, num: libc::c_int) -> *const libc::c_char;
+    pub fn seccomp_syscall_resolve_num_arch(
+        arch_token: u32,
+        num: libc::c_int,
+    ) -> *const libc::c_char;
 
     /**
      * Set the priority of a given syscall
@@ -296,8 +321,11 @@ extern {
      * filter.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_syscall_priority(ctx: *mut scmp_filter_ctx,
-                                 syscall: libc::c_int, priority: u8) -> libc::c_int;
+    pub fn seccomp_syscall_priority(
+        ctx: *mut scmp_filter_ctx,
+        syscall: libc::c_int,
+        priority: u8,
+    ) -> libc::c_int;
 
     /**
      * Add a new rule to the filter
@@ -316,10 +344,13 @@ extern {
      * values on failure.
      *
      */
-    pub fn seccomp_rule_add(ctx: *mut scmp_filter_ctx,
-                         action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
-
-
+    pub fn seccomp_rule_add(
+        ctx: *mut scmp_filter_ctx,
+        action: u32,
+        syscall: libc::c_int,
+        arg_cnt: libc::c_uint,
+        ...
+    ) -> libc::c_int;
 
     /**
      * Add a new rule to the filter
@@ -338,9 +369,13 @@ extern {
      * values on failure.
      *
      */
-    pub fn seccomp_rule_add_array(ctx: *mut scmp_filter_ctx,
-        action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint,
-        arg_array: *const scmp_arg_cmp) -> libc::c_int;
+    pub fn seccomp_rule_add_array(
+        ctx: *mut scmp_filter_ctx,
+        action: u32,
+        syscall: libc::c_int,
+        arg_cnt: libc::c_uint,
+        arg_array: *const scmp_arg_cmp,
+    ) -> libc::c_int;
 
     /**
      * Add a new rule to the filter
@@ -358,8 +393,13 @@ extern {
      * function will fail.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_rule_add_exact(ctx: *mut scmp_filter_ctx, action: u32,
-                               syscall: libc::c_int, arg_cnt: libc::c_uint, ...) -> libc::c_int;
+    pub fn seccomp_rule_add_exact(
+        ctx: *mut scmp_filter_ctx,
+        action: u32,
+        syscall: libc::c_int,
+        arg_cnt: libc::c_uint,
+        ...
+    ) -> libc::c_int;
 
     /**
      * Add a new rule to the filter
@@ -377,9 +417,13 @@ extern {
      * function will fail.  Returns zero on success, negative values on failure.
      *
      */
-    pub fn seccomp_rule_add_exact_array(ctx: *mut scmp_filter_ctx,
-                                        action: u32, syscall: libc::c_int, arg_cnt: libc::c_uint,
-                                        arg_array: *const scmp_arg_cmp) -> libc::c_int;
+    pub fn seccomp_rule_add_exact_array(
+        ctx: *mut scmp_filter_ctx,
+        action: u32,
+        syscall: libc::c_int,
+        arg_cnt: libc::c_uint,
+        arg_array: *const scmp_arg_cmp,
+    ) -> libc::c_int;
 
     /**
      * Generate seccomp Pseudo Filter Code (PFC) and export it to a file
@@ -416,8 +460,10 @@ extern {
      *
      */
     #[cfg(seccomp_notify)]
-    pub fn seccomp_notify_alloc(req: *mut *mut seccomp_notif,
-                                resp: *mut *mut seccomp_notif_resp) -> libc::c_int;
+    pub fn seccomp_notify_alloc(
+        req: *mut *mut seccomp_notif,
+        resp: *mut *mut seccomp_notif_resp,
+    ) -> libc::c_int;
 
     /**
      * Free a pair of notification request/response structures.
@@ -425,8 +471,10 @@ extern {
      * @param resp the response location
      */
     #[cfg(seccomp_notify)]
-    pub fn seccomp_notify_free(req: *mut seccomp_notif,
-                               resp: *mut seccomp_notif_resp) -> libc::c_void;
+    pub fn seccomp_notify_free(
+        req: *mut seccomp_notif,
+        resp: *mut seccomp_notif_resp,
+    ) -> libc::c_void;
 
     /**
      * Receive a notification from a seccomp notification fd
