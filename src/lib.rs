@@ -11,13 +11,17 @@ pub type scmp_filter_ctx = libc::c_void;
 pub const __NR_SCMP_ERROR: libc::c_int = -1;
 
 /**
- * Kill the calling thread
- */
-pub const SCMP_ACT_KILL: u32 = 0x00000000;
-/**
  * Kill the calling process
  */
 pub const SCMP_ACT_KILL_PROCESS: u32 = 0x80000000;
+/**
+ * Kill the thread
+ */
+pub const SCMP_ACT_KILL_THREAD: u32 = 0x00000000;
+/**
+ * Kill the thread, defined for backward compatibility
+ */
+pub const SCMP_ACT_KILL: u32 = SCMP_ACT_KILL_THREAD;
 /**
  * Throw a SIGSYS signal
  */
@@ -36,6 +40,10 @@ pub fn SCMP_ACT_ERRNO(x: u32) -> u32 {
 pub fn SCMP_ACT_TRACE(x: u32) -> u32 {
     0x7ff00000 | ((x) & 0x0000ffff)
 }
+/**
+ * Allow the syscall to be executed after the action has been logged
+ */
+pub const SCMP_ACT_LOG: u32 = 0x7ffc0000;
 /**
  * Allow the syscall to be executed
  */
@@ -59,6 +67,22 @@ pub enum scmp_filter_attr {
     /** bad architecture action */
     SCMP_FLTATR_CTL_NNP,
     /** set NO_NEW_PRIVS on filter load */
+    SCMP_FLTATR_CTL_TSYNC,
+    /** sync threads on filter load */
+    SCMP_FLTATR_API_TSKIP,
+    /** allow rules with a -1 syscall */
+    SCMP_FLTATR_CTL_LOG,
+    /** log not-allowed actions */
+    SCMP_FLTATR_CTL_SSB,
+    /** disable SSB mitigation */
+    SCMP_FLTATR_CTL_OPTIMIZE,
+    /** filter optimization level:
+     * 0 - currently unused
+     * 1 - rules weighted by priority and complexity (DEFAULT)
+     * 2 - binary tree sorted by syscall number
+     */
+    SCMP_FLTATR_API_SYSRAWRC,
+    /** return the system return codes */
     _SCMP_FLTATR_MAX,
 }
 
@@ -111,6 +135,9 @@ pub enum scmp_arch {
     SCMP_ARCH_PPC64LE = 0xc0000015,
     SCMP_ARCH_S390 = 0x16,
     SCMP_ARCH_S390X = 0x80000016,
+    SCMP_ARCH_PARISC = 0xf,
+    SCMP_ARCH_PARISC64 = 0x8000000f,
+    SCMP_ARCH_RISCV64 = 0xc00000f3,
 }
 
 /**
