@@ -263,6 +263,16 @@ extern "C" {
     pub fn seccomp_arch_remove(ctx: *mut scmp_filter_ctx, arch_token: u32) -> libc::c_int;
 
     /**
+     * Resolve the architecture name to a architecture token
+     * @param arch_name the architecture name
+     *
+     * This function resolves the given architecture name to a token suitable for
+     * use with libseccomp, returns zero on failure.
+     *
+     */
+    pub fn seccomp_arch_resolve_name(arch_name: *const libc::c_char) -> libc::c_uint;
+
+    /**
      * Loads the filter into the kernel
      *
      * @param ctx the filter context
